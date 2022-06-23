@@ -3,6 +3,14 @@ uuid = "cb277d27-4572-457a-a8ee-2696a40688ee"
 authors = ["ngiann <ngiann@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+DeterministicESN = "9d3c0a80-2a07-4549-acfe-7a6c9ee150ac"
+ForwardNeuralNetworks = "41bbd1a4-0eca-4bcd-b6b1-8656d032eaeb"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Optim = "429524aa-4258-5aef-a3af-852621145aeb"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+ReverseDiff = "37e2e3b7-166d-5795-8a7a-e32c996b4267"
+
 [compat]
 julia = "1"
 

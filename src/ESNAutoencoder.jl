@@ -1,5 +1,9 @@
 module ESNAutoencoder
 
-# Write your package code here.
+    using DeterministicESN, Optim, ReverseDiff, Printf, LinearAlgebra, ForwardNeuralNetworks
+
+    include("ae.jl")
+
+    export ae
 
 end
