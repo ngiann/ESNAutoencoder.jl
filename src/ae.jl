@@ -1,16 +1,17 @@
 
-function ae(Y, labels; esn = esn, M = 10, H = 2, iterations = 1, α = 1e-2)
+function ae(Y, labels; esn = esn, M = 10, H = 2, iterations = 1, α = 1e-2, λ = 1e-2)
 
     D = esn.N + 1
 
     net = [layer(D, M, identity); layer(M, H); layer(H, M, identity); layer(M, D)]
 
     # initial weights
-    ae(Y, labels, randn(numweights(net))*0.1; esn = esn, M = M, H = H, iterations = iterations, α = α)
+    ae(Y, labels, randn(numweights(net))*0.1; esn = esn, M = M, H = H, iterations = iterations, α = α, λ = λ)
 
 end
 
-function ae(Y, labels, weights; esn = esn, M = 10, H = 2, iterations = 1, depth = 1, α = 1e-2)
+
+function ae(Y, labels, weights; esn = esn, M = 10, H = 2, iterations = 1, depth = 1, α = 1e-2, λ = 1e-2)
 
     inputs, targets = [y[1:end-1] for y in Y], [y[2:end] for y in Y]
 
@@ -31,7 +32,7 @@ function ae(Y, labels, weights; esn = esn, M = 10, H = 2, iterations = 1, depth 
 
     X = [esn(y) for y in inputs]
 
-    W = [DeterministicESN.getreadouts(esn, y,  1e-2, 0) for y in inputs]
+    W = [DeterministicESN.getreadouts(esn, y, λ, 20) for y in Y]
 
 
     #-------------------------------------------------
@@ -87,15 +88,16 @@ function ae(Y, labels, weights; esn = esn, M = 10, H = 2, iterations = 1, depth 
     # set optimised weight parameters
     setparam!(net, result.minimizer)
 
-    Z = reduce(hcat, [net[3:end](w) for w in W])
+    function encoder(y)
+        local w = DeterministicESN.getreadouts(esn, y, λ, 20)
+        return net[3:end](w)
+    end
 
-    # @show size(Z)
-    # # plot
-    # figure(0); cla()
-    # for l in unique(labels)
-    #     idx = findall(labels .== l)
-    #     plot(Z[1, idx], Z[2, idx], "o")
-    # end
+    function decoder(z)
+        return net[1:2](z)
+    end
 
-    return Z, result.minimizer
+    # Z = reduce(hcat, [net[3:end](w) for w in W])
+
+    return encoder, decoder
 end
